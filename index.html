@@ -1,1 +1,368 @@
+<!DOCTYPE html>
+<html lang="en">
 
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<title>Jam & Pickles | AI Meal Planner</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Inter&display=swap" rel="stylesheet">
+
+<style>
+
+/* ---------- GLOBAL ---------- */
+
+* {
+  box-sizing: border-box;
+  font-family: Inter, sans-serif;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background: #FAFAF7;
+  color: #222;
+}
+
+/* ---------- HEADER ---------- */
+
+header {
+  background: white;
+  padding: 20px 40px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+}
+
+.logo {
+  font-family: Poppins;
+  font-size: 24px;
+  font-weight: 700;
+}
+
+.logo .jam { color: #C0392B; }
+.logo .pickle { color: #27AE60; }
+
+nav a {
+  margin-left: 20px;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+/* ---------- HERO ---------- */
+
+.hero {
+  text-align: center;
+  padding: 80px 20px;
+  max-width: 900px;
+  margin: auto;
+}
+
+.hero h1 {
+  font-family: Poppins;
+  font-size: 46px;
+  margin-bottom: 20px;
+}
+
+.hero p {
+  color: #555;
+  font-size: 18px;
+}
+
+/* ---------- PLANNER ---------- */
+
+.planner {
+  background: white;
+  max-width: 700px;
+  margin: auto;
+  padding: 30px;
+  border-radius: 20px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+}
+
+.planner h2 {
+  font-family: Poppins;
+  margin-bottom: 15px;
+}
+
+textarea {
+  width: 100%;
+  padding: 15px;
+  border-radius: 10px;
+  border: 1px solid #ddd;
+  resize: none;
+  min-height: 100px;
+}
+
+textarea:focus {
+  outline: none;
+  border-color: #27AE60;
+}
+
+.options {
+  display: flex;
+  gap: 15px;
+  margin: 15px 0;
+  flex-wrap: wrap;
+}
+
+select {
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+}
+
+button {
+  width: 100%;
+  background: #C0392B;
+  color: white;
+  padding: 14px;
+  border-radius: 12px;
+  border: none;
+  font-size: 18px;
+  font-family: Poppins;
+  cursor: pointer;
+}
+
+button:hover {
+  background: #A93226;
+}
+
+/* ---------- LOADING ---------- */
+
+.loading {
+  display: none;
+  text-align: center;
+  padding: 40px;
+}
+
+.spinner {
+  width: 50px;
+  height: 50px;
+  border: 5px solid #eee;
+  border-top: 5px solid #27AE60;
+  border-radius: 50%;
+  margin: auto;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ---------- RESULTS ---------- */
+
+.results {
+  display: none;
+  max-width: 900px;
+  margin: 60px auto;
+  padding: 20px;
+}
+
+.results h2 {
+  text-align: center;
+  margin-bottom: 25px;
+}
+
+.day {
+  background: white;
+  padding: 20px;
+  border-radius: 15px;
+  margin-bottom: 20px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.06);
+}
+
+.day h3 {
+  color: #27AE60;
+  margin-bottom: 10px;
+}
+
+/* ---------- FOOTER ---------- */
+
+footer {
+  background: #222;
+  color: white;
+  text-align: center;
+  padding: 25px;
+  margin-top: 80px;
+}
+
+/* ---------- MOBILE ---------- */
+
+@media(max-width:700px){
+
+  header {
+    padding: 15px 20px;
+  }
+
+  .hero h1 {
+    font-size: 32px;
+  }
+
+}
+
+</style>
+</head>
+
+
+<body>
+
+<header>
+
+<div class="logo">
+  <span class="jam">Jam</span> &
+  <span class="pickle">Pickles</span>
+</div>
+
+<nav>
+  <a href="#planner">Planner</a>
+  <a href="#about">About</a>
+</nav>
+
+</header>
+
+
+<section class="hero">
+
+<h1>AI Meal Planning From Your Pantry</h1>
+
+<p>
+Turn your ingredients into a smart weekly meal plan.
+Eat better. Waste less.
+</p>
+
+</section>
+
+
+<section id="planner" class="planner">
+
+<h2>What's in your kitchen?</h2>
+
+<textarea id="ingredients"
+placeholder="Rice, eggs, chicken, tomatoes..."></textarea>
+
+<div class="options">
+
+<select id="diet">
+  <option>Diet: None</option>
+  <option>Vegan</option>
+  <option>Keto</option>
+  <option>Halal</option>
+</select>
+
+<select id="budget">
+  <option>Budget: Low</option>
+  <option>Medium</option>
+  <option>High</option>
+</select>
+
+<select id="time">
+  <option>Time: Any</option>
+  <option>Under 20 min</option>
+  <option>Under 40 min</option>
+</select>
+
+</div>
+
+<button onclick="generatePlan()">
+Generate My Plan
+</button>
+
+</section>
+
+
+<section id="loading" class="loading">
+
+<div class="spinner"></div>
+<p>Cooking your week...</p>
+
+</section>
+
+
+<section id="results" class="results">
+
+<h2>Your 7-Day Plan</h2>
+
+<div id="plan"></div>
+
+</section>
+
+
+<footer id="about">
+
+<p>
+© 2026 Jam & Pickles<br>
+AI-Powered Meal Planning
+</p>
+
+</footer>
+
+
+<script>
+
+function generatePlan(){
+
+const ingredients =
+document.getElementById("ingredients").value;
+
+if(ingredients.trim()===""){
+  alert("Enter some ingredients first.");
+  return;
+}
+
+document.getElementById("loading").style.display="block";
+document.getElementById("results").style.display="none";
+
+setTimeout(()=>{
+
+const data = [
+{day:"Monday",b:"Egg Omelette",l:"Chicken Rice",d:"Soup"},
+{day:"Tuesday",b:"Oats",l:"Veg Stir Fry",d:"Grilled Chicken"},
+{day:"Wednesday",b:"Toast",l:"Salad",d:"Pasta"},
+{day:"Thursday",b:"Smoothie",l:"Wrap",d:"Rice Bowl"},
+{day:"Friday",b:"Pancakes",l:"Fried Rice",d:"Fish"},
+{day:"Saturday",b:"Eggs",l:"Burger Bowl",d:"Pizza Toast"},
+{day:"Sunday",b:"Omelette",l:"BBQ Chicken",d:"Salad"}
+];
+
+showPlan(data);
+
+document.getElementById("loading").style.display="none";
+document.getElementById("results").style.display="block";
+
+},1500);
+
+}
+
+
+function showPlan(data){
+
+const box=document.getElementById("plan");
+box.innerHTML="";
+
+data.forEach(d=>{
+
+box.innerHTML+=`
+
+<div class="day">
+
+<h3>${d.day}</h3>
+
+<p>🍳 Breakfast: ${d.b}</p>
+<p>🥗 Lunch: ${d.l}</p>
+<p>🍝 Dinner: ${d.d}</p>
+
+</div>
+
+`;
+
+});
+
+}
+
+</script>
+
+</body>
+</html>
