@@ -1,12 +1,12 @@
 * {
   box-sizing: border-box;
-  font-family: "Poppins", sans-serif;
+  font-family: Poppins, sans-serif;
 }
 
 body {
   margin: 0;
   background: #FAFAF7;
-  color: #222222;
+  color: #222;
 }
 
 .container {
@@ -15,6 +15,8 @@ body {
   padding: 20px;
 }
 
+/* HEADER */
+
 header {
   background: white;
   border-bottom: 1px solid #E5E5E5;
@@ -22,47 +24,38 @@ header {
 
 .header-content {
   display: flex;
-  align-items: center;
   justify-content: space-between;
+  align-items: center;
 }
 
 .brand {
   display: flex;
+  gap: 12px;
   align-items: center;
-  gap: 15px;
 }
 
 .logo {
-  height: 55px;
+  height: 50px;
 }
 
-.subtitle {
-  color: #27AE60;
-  margin-top: -8px;
-  font-size: 14px;
-}
+/* CARDS */
 
 .card {
   background: white;
   padding: 25px;
   border-radius: 16px;
   margin-bottom: 25px;
-  box-shadow: 0 6px 20px rgba(0,0,0,0.05);
+  box-shadow: 0 5px 20px rgba(0,0,0,0.05);
 }
+
+/* INPUTS */
 
 textarea {
   width: 100%;
   min-height: 100px;
-  padding: 15px;
+  padding: 12px;
   border-radius: 12px;
   border: 1px solid #ddd;
-  font-size: 15px;
-}
-
-.preferences {
-  display: flex;
-  gap: 10px;
-  margin: 15px 0;
 }
 
 select {
@@ -72,13 +65,20 @@ select {
   border: 1px solid #ddd;
 }
 
+.preferences {
+  display: flex;
+  gap: 10px;
+  margin: 12px 0;
+}
+
+/* BUTTONS */
+
 button {
-  cursor: pointer;
   border-radius: 12px;
   padding: 12px;
-  font-weight: 500;
   border: none;
-  transition: 0.3s ease;
+  cursor: pointer;
+  font-weight: 500;
 }
 
 .btn-primary {
@@ -87,7 +87,7 @@ button {
 }
 
 .btn-primary:hover {
-  background: #a93226;
+  background: #A93226;
 }
 
 .btn-outline {
@@ -106,16 +106,37 @@ button {
   margin-top: 10px;
 }
 
-.small {
-  padding: 6px 12px;
-  font-size: 12px;
+/* MODAL */
+
+.modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.4);
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
-.loading {
-  margin-top: 10px;
-  color: #27AE60;
-  font-weight: 500;
+.modal-box {
+  background: white;
+  padding: 25px;
+  border-radius: 14px;
+  width: 300px;
 }
+
+.modal-box input {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 10px;
+}
+
+.link {
+  background: none;
+  color: #C0392B;
+  margin-top: 10px;
+}
+
+/* OTHER */
 
 pre {
   white-space: pre-wrap;
@@ -124,12 +145,17 @@ pre {
   border-radius: 10px;
 }
 
-footer {
-  text-align: center;
-  padding: 20px;
-  color: #777;
+.loading {
+  color: #27AE60;
+  margin-top: 10px;
 }
 
 .hidden {
   display: none;
+}
+
+footer {
+  text-align: center;
+  padding: 20px;
+  color: #777;
 }
