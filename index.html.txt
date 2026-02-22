@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Jam & Pickles – AI Meal Planner</title>
+
+  <link rel="stylesheet" href="style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+</head>
+
+<body>
+
+<header>
+  <h1>🍓 Jam & Pickles</h1>
+  <p>AI-Powered Meal Planning</p>
+</header>
+
+<section class="hero">
+  <h2>Turn Your Pantry Into Smart Meals</h2>
+  <p>Enter your ingredients and get a 7-day meal plan instantly.</p>
+</section>
+
+<section class="app">
+
+  <h3>What’s In Your Kitchen?</h3>
+
+  <textarea
+    id="ingredients"
+    placeholder="Example: rice, chicken, tomatoes, eggs..."
+  ></textarea>
+
+  <div class="options">
+
+    <select id="diet">
+      <option value="">Diet</option>
+      <option>Normal</option>
+      <option>Vegetarian</option>
+      <option>Vegan</option>
+      <option>Keto</option>
+      <option>Halal</option>
+    </select>
+
+    <select id="budget">
+      <option value="">Budget</option>
+      <option>Low</option>
+      <option>Medium</option>
+      <option>High</option>
+    </select>
+
+    <select id="time">
+      <option value="">Cooking Time</option>
+      <option>Under 20 min</option>
+      <option>Under 40 min</option>
+      <option>Any</option>
+    </select>
+
+  </div>
+
+  <button id="generateBtn">
+    Generate My Plan
+  </button>
+
+  <div id="loading" class="hidden">
+    Cooking your week... 🍳
+  </div>
+
+  <div id="result"></div>
+
+</section>
+
+<footer>
+  <p>© 2026 Jam & Pickles</p>
+</footer>
+
+<script src="script.js"></script>
+
+</body>
+</html>
