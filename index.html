@@ -2,99 +2,67 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Jam & Pickles – AI Meal Planner</title>
 
-  <!-- SEO -->
   <meta name="description" content="Jam & Pickles is an AI-powered meal planner that turns your pantry into smart weekly meal plans." />
 
-  <!-- Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
-
-  <!-- Styles -->
   <link rel="stylesheet" href="style.css" />
 </head>
 
 <body>
 
-<!-- ================= HEADER ================= -->
-
-<header class="main-header">
-  <div class="container">
-    <h1 class="logo">🍓 Jam & Pickles</h1>
-    <p class="tagline">AI Meal Planner</p>
+<header>
+  <div class="container header-content">
+    <div class="brand">
+      <img src="logo.png" class="logo" alt="Jam & Pickles Logo" />
+      <div>
+        <h1>Jam & Pickles</h1>
+        <p class="subtitle">AI Meal Planner</p>
+      </div>
+    </div>
   </div>
 </header>
 
-<!-- ================= AUTH ================= -->
-
 <section class="auth-section">
-
   <div class="container">
 
-    <!-- LOGIN / SIGNUP -->
-
-    <div id="authBox" class="auth-box">
-
-      <h2>Welcome</h2>
-      <p>Login or create your account</p>
+    <div id="authBox" class="card">
+      <h2>Login or Sign Up</h2>
 
       <input type="email" id="email" placeholder="Email address" />
       <input type="password" id="password" placeholder="Password" />
 
       <div class="auth-buttons">
         <button class="btn-primary" onclick="login()">Login</button>
-        <button class="btn-secondary" onclick="signUp()">Sign Up</button>
+        <button class="btn-outline" onclick="signUp()">Sign Up</button>
       </div>
-
     </div>
 
-    <!-- USER INFO -->
-
-    <div id="userBox" class="user-box hidden">
-
-      <p>
-        Logged in as:
-        <strong><span id="userEmail"></span></strong>
-      </p>
-
-      <button class="btn-outline" onclick="logout()">Logout</button>
-
+    <div id="userBox" class="hidden user-info">
+      Logged in as <strong><span id="userEmail"></span></strong>
+      <button class="btn-outline small" onclick="logout()">Logout</button>
     </div>
 
   </div>
-
 </section>
 
-<!-- ================= MAIN APP ================= -->
-
-<section id="appSection" class="app-section hidden">
-
+<section id="appSection" class="hidden app-section">
   <div class="container">
 
-    <!-- INPUT -->
-
     <div class="card">
-
       <h2>Create Your Meal Plan</h2>
 
-      <label>Ingredients</label>
-
-      <textarea
-        id="ingredients"
-        placeholder="Example: rice, chicken, tomatoes, eggs..."
-      ></textarea>
+      <textarea id="ingredients" placeholder="rice, chicken, tomatoes..."></textarea>
 
       <div class="preferences">
-
         <select id="diet">
           <option value="">Diet</option>
           <option>Normal</option>
           <option>Vegetarian</option>
           <option>Vegan</option>
           <option>Keto</option>
-          <option>Halal</option>
         </select>
 
         <select id="budget">
@@ -103,85 +71,34 @@
           <option>Medium</option>
           <option>High</option>
         </select>
-
-        <select id="time">
-          <option value="">Cooking Time</option>
-          <option>Under 20 min</option>
-          <option>Under 40 min</option>
-          <option>Any</option>
-        </select>
-
       </div>
 
-      <button
-        class="btn-primary full-width"
-        onclick="generatePlan()"
-      >
-        Generate My Plan
-      </button>
+      <button class="btn-primary full" onclick="generatePlan()">Generate My Plan</button>
 
-      <div id="loading" class="loading hidden">
-        🍳 Creating your plan...
-      </div>
-
+      <div id="loading" class="hidden loading">Creating your plan...</div>
     </div>
 
-    <!-- RESULT -->
-
     <div class="card">
-
-      <h2>Your Meal Plan</h2>
-
-      <pre id="result" class="result-box"></pre>
-
-      <button
-        class="btn-secondary full-width"
-        onclick="savePlan()"
-      >
-        Save This Plan
-      </button>
-
+      <h2>Your Plan</h2>
+      <pre id="result"></pre>
+      <button class="btn-outline full" onclick="savePlan()">Save Plan</button>
     </div>
 
-    <!-- SAVED PLANS -->
-
     <div class="card">
-
-      <h2>My Saved Plans</h2>
-
-      <div id="savedPlans" class="plans-list">
-        <!-- Loaded dynamically -->
-      </div>
-
+      <h2>Saved Plans</h2>
+      <div id="savedPlans"></div>
     </div>
 
   </div>
-
 </section>
 
-<!-- ================= FOOTER ================= -->
-
-<footer class="main-footer">
-
+<footer>
   <div class="container">
-
-    <p>
-      © 2026 Jam & Pickles · AI Meal Planning Platform
-    </p>
-
+    © 2026 Jam & Pickles
   </div>
-
 </footer>
 
-<!-- ================= FIREBASE ================= -->
-
-<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js"></script>
-
-<!-- ================= MAIN SCRIPT ================= -->
-
-<script src="script.js"></script>
+<script type="module" src="script.js"></script>
 
 </body>
 </html>
