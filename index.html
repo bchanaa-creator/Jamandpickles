@@ -2,10 +2,11 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
   <title>Jam & Pickles – AI Meal Planner</title>
 
-  <meta name="description" content="Jam & Pickles is an AI-powered meal planner that turns your pantry into smart weekly meal plans." />
+  <meta name="description" content="AI-powered meal planning from your pantry." />
 
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css" />
@@ -13,50 +14,67 @@
 
 <body>
 
+<!-- HEADER -->
 <header>
   <div class="container header-content">
+
     <div class="brand">
-      <img src="logo.png" class="logo" alt="Jam & Pickles Logo" />
+
+      <!-- Logo with fallback -->
+      <img src="logo.png" class="logo"
+           onerror="this.style.display='none'" />
+
       <div>
         <h1>Jam & Pickles</h1>
         <p class="subtitle">AI Meal Planner</p>
       </div>
+
     </div>
+
+    <div id="userArea">
+      <button id="loginBtn" class="btn-outline">Login</button>
+      <button id="logoutBtn" class="btn-outline hidden">Logout</button>
+    </div>
+
   </div>
 </header>
 
-<section class="auth-section">
-  <div class="container">
 
-    <div id="authBox" class="card">
-      <h2>Login or Sign Up</h2>
+<!-- LOGIN MODAL -->
+<div id="loginModal" class="modal hidden">
 
-      <input type="email" id="email" placeholder="Email address" />
-      <input type="password" id="password" placeholder="Password" />
+  <div class="modal-box">
 
-      <div class="auth-buttons">
-        <button class="btn-primary" onclick="login()">Login</button>
-        <button class="btn-outline" onclick="signUp()">Sign Up</button>
-      </div>
-    </div>
+    <h2>Login / Sign Up</h2>
 
-    <div id="userBox" class="hidden user-info">
-      Logged in as <strong><span id="userEmail"></span></strong>
-      <button class="btn-outline small" onclick="logout()">Logout</button>
-    </div>
+    <input id="email" type="email" placeholder="Email" />
+    <input id="password" type="password" placeholder="Password" />
+
+    <button class="btn-primary full" onclick="login()">Login</button>
+    <button class="btn-outline full" onclick="signUp()">Sign Up</button>
+
+    <button class="link" onclick="closeModal()">Close</button>
 
   </div>
-</section>
 
-<section id="appSection" class="hidden app-section">
+</div>
+
+
+<!-- APP -->
+<section class="app">
+
   <div class="container">
 
     <div class="card">
+
       <h2>Create Your Meal Plan</h2>
 
-      <textarea id="ingredients" placeholder="rice, chicken, tomatoes..."></textarea>
+      <textarea id="ingredients"
+        placeholder="rice, chicken, tomatoes, eggs..."
+      ></textarea>
 
       <div class="preferences">
+
         <select id="diet">
           <option value="">Diet</option>
           <option>Normal</option>
@@ -71,34 +89,61 @@
           <option>Medium</option>
           <option>High</option>
         </select>
+
       </div>
 
-      <button class="btn-primary full" onclick="generatePlan()">Generate My Plan</button>
+      <button class="btn-primary full" onclick="generatePlan()">
+        Generate My Plan
+      </button>
 
-      <div id="loading" class="hidden loading">Creating your plan...</div>
+      <div id="loading" class="hidden loading">
+        Creating your plan...
+      </div>
+
     </div>
 
+
     <div class="card">
-      <h2>Your Plan</h2>
+
+      <h2>Your Result</h2>
+
       <pre id="result"></pre>
-      <button class="btn-outline full" onclick="savePlan()">Save Plan</button>
+
+      <button id="saveBtn"
+        class="btn-outline full hidden"
+        onclick="savePlan()">
+
+        Save (Login Required)
+
+      </button>
+
     </div>
 
-    <div class="card">
-      <h2>Saved Plans</h2>
+
+    <div class="card hidden" id="savedSection">
+
+      <h2>My Saved Plans</h2>
+
       <div id="savedPlans"></div>
+
     </div>
 
   </div>
+
 </section>
 
+
 <footer>
-  <div class="container">
-    © 2026 Jam & Pickles
-  </div>
+  © 2026 Jam & Pickles
 </footer>
 
-<script type="module" src="script.js"></script>
+
+<!-- FIREBASE -->
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+
+<script src="script.js"></script>
 
 </body>
 </html>
