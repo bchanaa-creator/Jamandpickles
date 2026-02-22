@@ -1,6 +1,8 @@
-// ======================
-// FIREBASE CONFIG
-// ======================
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+import { getFirestore, collection, addDoc, query, where, getDocs, orderBy } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+/* ================= FIREBASE CONFIG ================= */
 
 const firebaseConfig = {
   apiKey: "AIzaSyDZJoiUD91FU7NCTLI4pm8AiSHuiOu1QQw",
@@ -11,149 +13,108 @@ const firebaseConfig = {
   appId: "1:750747740220:web:ad28b5ae3bc878b99c7b39"
 };
 
-firebase.initializeApp(firebaseConfig);
-
-const auth = firebase.auth();
-const db = firebase.firestore();
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
 
 let currentUser = null;
 
-// ======================
-// AUTH FUNCTIONS
-// ======================
+/* ================= AUTH ================= */
 
-function signUp() {
+window.signUp = async function() {
   const email = document.getElementById("email").value;
   const password = document.getElementById("password").value;
+  await createUserWithEmailAndPassword(auth, email, password);
+};
 
-  auth.createUserWithEmailAndPassword(email, password)
-    .catch(err => alert(err.message));
-}
-
-function login() {
+window.login = async function() {
   const email = document.getElementById("email").value;
   const password = document.getElementById("password").value;
+  await signInWithEmailAndPassword(auth, email, password);
+};
 
-  auth.signInWithEmailAndPassword(email, password)
-    .catch(err => alert(err.message));
-}
+window.logout = async function() {
+  await signOut(auth);
+};
 
-function logout() {
-  auth.signOut();
-}
-
-// Detect login state
-
-auth.onAuthStateChanged(user => {
+onAuthStateChanged(auth, user => {
 
   if (user) {
-
     currentUser = user;
-    document.getElementById("authSection").classList.add("hidden");
-    document.getElementById("userSection").classList.remove("hidden");
+    document.getElementById("authBox").classList.add("hidden");
+    document.getElementById("userBox").classList.remove("hidden");
     document.getElementById("appSection").classList.remove("hidden");
-
     document.getElementById("userEmail").innerText = user.email;
-
     loadPlans();
-
   } else {
-
-    currentUser = null;
-    document.getElementById("authSection").classList.remove("hidden");
-    document.getElementById("userSection").classList.add("hidden");
+    document.getElementById("authBox").classList.remove("hidden");
+    document.getElementById("userBox").classList.add("hidden");
     document.getElementById("appSection").classList.add("hidden");
-
   }
 
 });
 
-// ======================
-// AI GENERATION (same as before)
-// ======================
+/* ================= AI ================= */
 
-const API_KEY = "YOUR_OPENAI_KEY";
+const OPENAI_KEY = "YOUR_OPENAI_KEY";
 
-async function generatePlan() {
+window.generatePlan = async function() {
 
   const ingredients = document.getElementById("ingredients").value;
-
-  if (!ingredients) {
-    alert("Enter ingredients.");
-    return;
-  }
-
   document.getElementById("loading").classList.remove("hidden");
 
   const response = await fetch("https://api.openai.com/v1/chat/completions", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      "Authorization": "Bearer " + API_KEY
+      "Authorization": "Bearer " + OPENAI_KEY
     },
     body: JSON.stringify({
       model: "gpt-4o-mini",
       messages: [
-        { role: "user", content: "Create a 7 day meal plan using: " + ingredients }
+        { role: "user", content: "Create 7-day meal plan using: " + ingredients }
       ]
     })
   });
 
   const data = await response.json();
-
-  const text = data.choices[0].message.content;
-
-  document.getElementById("result").innerText = text;
+  document.getElementById("result").innerText = data.choices[0].message.content;
   document.getElementById("loading").classList.add("hidden");
-}
+};
 
-// ======================
-// SAVE PLAN
-// ======================
+/* ================= SAVE ================= */
 
-function savePlan() {
+window.savePlan = async function() {
 
-  const text = document.getElementById("result").innerText;
+  const content = document.getElementById("result").innerText;
+  if (!content) return;
 
-  if (!text || !currentUser) return;
-
-  db.collection("plans").add({
+  await addDoc(collection(db, "plans"), {
     userId: currentUser.uid,
-    content: text,
+    content: content,
     createdAt: new Date()
-  }).then(() => {
-    alert("Plan saved!");
-    loadPlans();
   });
 
-}
+  loadPlans();
+};
 
-// ======================
-// LOAD SAVED PLANS
-// ======================
+async function loadPlans() {
 
-function loadPlans() {
+  const q = query(
+    collection(db, "plans"),
+    where("userId", "==", currentUser.uid),
+    orderBy("createdAt", "desc")
+  );
+
+  const snapshot = await getDocs(q);
 
   const container = document.getElementById("savedPlans");
   container.innerHTML = "";
 
-  db.collection("plans")
-    .where("userId", "==", currentUser.uid)
-    .orderBy("createdAt", "desc")
-    .get()
-    .then(snapshot => {
-
-      snapshot.forEach(doc => {
-
-        const div = document.createElement("div");
-        div.classList.add("planCard");
-
-        div.innerText = doc.data().content;
-
-        container.appendChild(div);
-
-      });
-
-    });
-
+  snapshot.forEach(doc => {
+    const div = document.createElement("div");
+    div.className = "card";
+    div.innerText = doc.data().content;
+    container.appendChild(div);
+  });
 }
