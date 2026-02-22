@@ -1,7 +1,3 @@
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-import { getFirestore, collection, addDoc, query, where, getDocs, orderBy } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
-
 /* ================= FIREBASE CONFIG ================= */
 
 const firebaseConfig = {
@@ -13,43 +9,68 @@ const firebaseConfig = {
   appId: "1:750747740220:web:ad28b5ae3bc878b99c7b39"
 };
 
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const db = getFirestore(app);
+firebase.initializeApp(firebaseConfig);
+
+const auth = firebase.auth();
+const db = firebase.firestore();
 
 let currentUser = null;
 
+/* ================= UI ================= */
+
+const loginBtn = document.getElementById("loginBtn");
+const logoutBtn = document.getElementById("logoutBtn");
+const modal = document.getElementById("loginModal");
+const saveBtn = document.getElementById("saveBtn");
+const savedSection = document.getElementById("savedSection");
+
 /* ================= AUTH ================= */
 
-window.signUp = async function() {
-  const email = document.getElementById("email").value;
-  const password = document.getElementById("password").value;
-  await createUserWithEmailAndPassword(auth, email, password);
-};
+loginBtn.onclick = () => modal.classList.remove("hidden");
+function closeModal() { modal.classList.add("hidden"); }
 
-window.login = async function() {
-  const email = document.getElementById("email").value;
-  const password = document.getElementById("password").value;
-  await signInWithEmailAndPassword(auth, email, password);
-};
+function signUp() {
+  auth.createUserWithEmailAndPassword(
+    email.value, password.value
+  ).catch(e => alert(e.message));
+}
 
-window.logout = async function() {
-  await signOut(auth);
-};
+function login() {
+  auth.signInWithEmailAndPassword(
+    email.value, password.value
+  ).catch(e => alert(e.message));
+}
 
-onAuthStateChanged(auth, user => {
+function logout() {
+  auth.signOut();
+}
+
+auth.onAuthStateChanged(user => {
 
   if (user) {
+
     currentUser = user;
-    document.getElementById("authBox").classList.add("hidden");
-    document.getElementById("userBox").classList.remove("hidden");
-    document.getElementById("appSection").classList.remove("hidden");
-    document.getElementById("userEmail").innerText = user.email;
+
+    loginBtn.classList.add("hidden");
+    logoutBtn.classList.remove("hidden");
+
+    saveBtn.classList.remove("hidden");
+    savedSection.classList.remove("hidden");
+
+    modal.classList.add("hidden");
+
     loadPlans();
+
   } else {
-    document.getElementById("authBox").classList.remove("hidden");
-    document.getElementById("userBox").classList.add("hidden");
-    document.getElementById("appSection").classList.add("hidden");
+
+    currentUser = null;
+
+    loginBtn.classList.remove("hidden");
+    logoutBtn.classList.add("hidden");
+
+    saveBtn.classList.add("hidden");
+    savedSection.classList.add("hidden");
+
   }
 
 });
@@ -58,63 +79,75 @@ onAuthStateChanged(auth, user => {
 
 const OPENAI_KEY = "YOUR_OPENAI_KEY";
 
-window.generatePlan = async function() {
+async function generatePlan() {
 
   const ingredients = document.getElementById("ingredients").value;
-  document.getElementById("loading").classList.remove("hidden");
 
-  const response = await fetch("https://api.openai.com/v1/chat/completions", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "Authorization": "Bearer " + OPENAI_KEY
-    },
-    body: JSON.stringify({
-      model: "gpt-4o-mini",
-      messages: [
-        { role: "user", content: "Create 7-day meal plan using: " + ingredients }
-      ]
-    })
-  });
+  if (!ingredients) {
+    alert("Enter ingredients first");
+    return;
+  }
 
-  const data = await response.json();
-  document.getElementById("result").innerText = data.choices[0].message.content;
-  document.getElementById("loading").classList.add("hidden");
-};
+  loading.classList.remove("hidden");
+
+  const res = await fetch(
+    "https://api.openai.com/v1/chat/completions", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer " + OPENAI_KEY
+      },
+      body: JSON.stringify({
+        model: "gpt-4o-mini",
+        messages: [
+          { role: "user", content: "Create 7 day meal plan with: " + ingredients }
+        ]
+      })
+    }
+  );
+
+  const data = await res.json();
+
+  result.innerText = data.choices[0].message.content;
+
+  loading.classList.add("hidden");
+}
 
 /* ================= SAVE ================= */
 
-window.savePlan = async function() {
+async function savePlan() {
 
-  const content = document.getElementById("result").innerText;
+  if (!currentUser) return;
+
+  const content = result.innerText;
+
   if (!content) return;
 
-  await addDoc(collection(db, "plans"), {
+  await db.collection("plans").add({
     userId: currentUser.uid,
-    content: content,
-    createdAt: new Date()
+    content,
+    created: new Date()
   });
 
   loadPlans();
-};
+}
 
 async function loadPlans() {
 
-  const q = query(
-    collection(db, "plans"),
-    where("userId", "==", currentUser.uid),
-    orderBy("createdAt", "desc")
-  );
+  const snap = await db.collection("plans")
+    .where("userId","==",currentUser.uid)
+    .orderBy("created","desc")
+    .get();
 
-  const snapshot = await getDocs(q);
+  savedPlans.innerHTML = "";
 
-  const container = document.getElementById("savedPlans");
-  container.innerHTML = "";
+  snap.forEach(doc => {
 
-  snapshot.forEach(doc => {
     const div = document.createElement("div");
     div.className = "card";
     div.innerText = doc.data().content;
-    container.appendChild(div);
+
+    savedPlans.appendChild(div);
+
   });
 }
